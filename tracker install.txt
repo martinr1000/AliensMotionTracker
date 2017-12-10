@@ -1,0 +1,85 @@
+install for rasbian jessie
+
+install folder on the pi
+1) navigate the /home/pi/
+2) create a folder named tracker
+3) copy files from github repository over to the new folder
+
+Enable interfaces
+1) open lxterminal
+2) type the following then press enter:
+	sudo raspi-config
+3) enable SPI
+4) enable IC2
+5) reboot
+6) open lxterminal
+7) type the following then press enter:
+	sudo apt-get install i2c-tools (it may already be at the newest version, thats ok)
+8) type the following then press enter:
+	sudo leafpad
+9) insert the following lines:-
+	spi-bcm2835 
+	fbtft_device
+10) save file as /etc/modules-load.d/fbtft.conf
+11) type the following then press enter:
+	sudo leafpad
+12) insert the following lines:-
+	options fbtft_device name=fb_ili9341 gpios=reset:25,dc:24,led:12 speed=16000000 bgr=1 rotate=270 custom=1
+13) save file as /ect/modprobe.d/ili9341.conf
+
+Install python smbus
+1) open lxterminal
+2) type the following then press enter:
+	sudo apt-get install python.smbus
+
+Audio
+1) open lxterminal
+2) type the following then press enter:
+	curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
+3) follow onscreen instructions to reboot
+
+Frame buffer copy
+1) open terminal
+2) type the following then press enter:
+	sudo apt-get install cmake
+3) type the following then press enter:
+	git clone https://github.com/tasanakorn/rpi-fbcp
+4) type the following then press enter:
+	cd rpi-fbcp/
+5) type the following then press enter:
+	mkdir build
+6) type the following then press enter:
+	cd build/
+7) type the following then press enter:
+	cmake ..
+8) type the following then press enter:
+	make
+9) type the following then press enter:
+	sudo install fbcp /usr/local/bin/fbcp
+	(note framebuffer start and stop code is in the tracker code)
+
+Auto Startup
+1) open lxterminal
+2) type the following then press enter:
+	sudo nano ~/.config/lxsession/LXDE-pi/autostart
+3) add the following at the end of the file
+	@sudo python2 /home/pi/tracker/main.py
+4) save by ctrl+x [enter] y [enter]
+
+Finally, set the pi resolution to match the tft resolution of 320x240
+1) open terminal
+2) sudo nano /boot/config.txt
+3) find the lines below
+	# Uncomment to force a console size. By default it will be display's size minus
+	# overscan.
+	#framebuffer_width=1280
+	#framebuffer_height=720
+4) add the following lines
+	# Uncomment to force a console size. By default it will be display's size minus
+	# overscan.
+	#framebuffer_width=1280
+	#framebuffer_height=720
+        framebuffer_width=320
+	framebuffer_height=240
+5) save by ctrl+x [enter] y [enter]
+
