@@ -28,24 +28,29 @@ if gpioAvailable:
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    #setup user events
-    ev = pygame.event.Event(pygame.USEREVENT)
-    ev1 = pygame.event.Event(pygame.USEREVENT+1)
-    ev2 = pygame.event.Event(pygame.USEREVENT+2)
-
 buttonTimerStart = 0
 buttonTimerCurrent = 0
 buttonHoldTime = 0
 stateString="TRACK"
 changeState=True
 numberOfButtonPresses=0
+buttonHoldTime=0
 
 def my_callback(channel):
-    global numberOfButtonPresses
-    numberOfButtonPresses=numberOfButtonPresses+1
 
+    global numberOfButtonPresses
+    global buttonHoldTime
+    global buttonTimerStart
+
+    if GPIO.input(20):
+        buttonHoldTime = time.time() - buttonTimerStart
+        buttonTimerStart=0
+    else:
+        numberOfButtonPresses=numberOfButtonPresses+1
+        buttonTimerStart=time.time()
+    
 if gpioAvailable:
-    GPIO.add_event_detect(20, GPIO.FALLING, callback=my_callback, bouncetime=300)
+    GPIO.add_event_detect(20, GPIO.BOTH, callback=my_callback, bouncetime=300)
 
 #initialise pygame
 pygame.init()
@@ -79,25 +84,6 @@ sg.draw()
 
 while done==False:
 
-    #process any keyboard or gpio input that happens in the loop
-    #addContact = False 
-    #if gpioAvailable:
-    #    #check the button press status
-    #    input_state = GPIO.input(20)
-    #    if (currentState == True and input_state == False):
-    #        #the button has been pressed
-    #        time.sleep(0.2)
-    #        currentState = False
-    #        pygame.event.post(ev)
-    #    elif (currentState == False and input_state == True):
-    #        #the button has been released
-    #        time.sleep(0.2)
-    #        currentState = True
-    #        pygame.event.post(ev1)
-    #    elif (currentState == False and input_state == False):
-    #        #the button is being held down
-    #        pygame.event.post(ev2)
-
     if numberOfButtonPresses>1:
         addContact = True
         numberOfButtonPresses=0
@@ -110,18 +96,6 @@ while done==False:
         if event.type == pygame.QUIT: # If user clicked close
             done=True # Flag that we are done so we exit this loop
             pass
-        if event.type == pygame.USEREVENT:
-            buttonTimerStart=time.time()
-            buttonTimerCurrent=time.time()
-        if event.type == pygame.USEREVENT+1:
-            buttonTimerStart=0
-            buttonTimerCurrent=0
-            buttonHoldTime=0
-            changeState=True
-            addContact = True
-        if event.type == pygame.USEREVENT+2:
-            buttonTimerCurrent=time.time()
-            buttonHoldTime = buttonTimerCurrent - buttonTimerStart
         if event.type == pygame.KEYDOWN:
             if event.key==K_q:
                 qPress = True
@@ -134,25 +108,19 @@ while done==False:
                 addContact = True
         if event.type == pygame.KEYUP:
             if event.key==K_q:
-                changeState=False
                 qPress=False
 
     if qPress:
         buttonHoldTime = time.time() - buttonTimerStart
 
-    if buttonHoldTime>4 and changeState:
-        changeState=False
-        if stateString=="CALIBRATE":
-            stateString="TRACK"
-        else:
-            stateString="CALIBRATE"
-            ca.initCalibration()
-            calibrationStep = 0
+    if buttonHoldTime>4:
+        buttonHoldTime=0
+        stateString="CALIBRATE"
+        ca.initCalibration()
+        calibrationStep = 0
 
     if stateString=="CALIBRATE":
         xy = ca.calibrate(calibrationStep)
-        print str(xy[0])
-        print str(xy[1])
 
         if calibrationStep==0:
             cg.initBackground()
