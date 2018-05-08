@@ -68,6 +68,21 @@ class Calibration:
             self.xOffset = 0
             self.yOffset = 0
 
+    #define a method to write the new x and y offset values back to file
+    def writeOffsetsToFile(self):
+        try:
+            target = open(self.offsetFilePath, 'w')
+        except:
+            return
+
+        xOffsetString = "xOffset=" + self.xOffset.string()
+        yOffsetString = "yOffset=" + self.yOffset.string()
+
+        target.write(xOffsetString)
+        target.write(yOffsetString)
+        target.close()
+            
+
     #init calibration
     def initCalibration(self):
 
@@ -123,5 +138,8 @@ class Calibration:
             #update the x and y offset values
             self.xOffset = (self.maxx + self.minx) / 2
             self.yOffset = (self.maxy + self.miny) / 2
+
+            #update the file offset values
+            self.writeOffsetsToFile()
 
             return self.xOffset,self.yOffset
