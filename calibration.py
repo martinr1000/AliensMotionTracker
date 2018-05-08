@@ -75,14 +75,16 @@ class Calibration:
         except:
             return
 
-        xOffsetString = "xOffset=" + self.xOffset.string()
-        yOffsetString = "yOffset=" + self.yOffset.string()
+        xOff = self.xOffset
+        yOff = self.yOffset
+
+        xOffsetString = "xOffset=" + str(xOff) + "\n"
+        yOffsetString = "yOffset=" + str(yOff)
 
         target.write(xOffsetString)
         target.write(yOffsetString)
         target.close()
             
-
     #init calibration
     def initCalibration(self):
 
