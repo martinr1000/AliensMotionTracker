@@ -21,6 +21,7 @@ class resources:
         #Load the image files
         self.info=pygame.image.load(resourcesDirPath + "/hudBottom.png").convert()
         self.compass=pygame.image.load(resourcesDirPath + "/motiontrackerhud.png").convert()
+        self.calibrationSplash=pygame.image.load(resourcesDirPath + "/calibrationSplash.png").convert()  
 
         #get the startup settings screens
         self.setup=[]
