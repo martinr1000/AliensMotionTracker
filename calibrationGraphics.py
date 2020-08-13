@@ -17,11 +17,12 @@ class CalibrationGraphics:
 
     def initBackground(self):
         background_colour = (0,0,0) 
-        self.scope.screen.fill(background_colour) 
+        self.scope.screen.fill(background_colour)
+        self.scope.screen.blit(self.resources.calibrationSplash, (0,0))
 
     def update(self, xy, calibration):
-        self.scope.screen.blit(self.resources.contactBack[3], (xy[0]-25,xy[1]-25))
-        self.scope.screen.blit(self.resources.contactFore[3], (xy[0]-25,xy[1]-25))
+        #self.scope.screen.blit(self.resources.contactBack[3], (xy[0]-25,xy[1]-25))
+        #self.scope.screen.blit(self.resources.contactFore[3], (xy[0]-25,xy[1]-25))
 
         self.draw()    
     

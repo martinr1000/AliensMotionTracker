@@ -5,3 +5,8 @@ This folder contains wiring diagrams for the components used in the tracker proj
 3) an Adafruit I2S 3W Class D Amplifier Breakout - MAX98357A  
 4) an Adafruit PowerBoost 500 Basic
 5) a 4 ohm speaker 
+
+(optional)
+
+1) add a flashing LED to the motion tracker. This is to be housed in the display unit box as required. (see mt led.jpg)
+   220ohm resistor attached to gpio 27. Led attached to resistor and 3v pin
