@@ -117,14 +117,16 @@ try:
           #change the led state
           if ledState:
             ledState = False
-            GPIO.output(ledPin, ledState)    
+            if gpioAvailable:
+              GPIO.output(ledPin, ledState)    
             #set the change state flag to false as we are awaiting the next state change
             changeLedState = False
             #initialise the clock instance to track led timings
             startTime = time.time()
           else:
             ledState = True
-            GPIO.output(ledPin, ledState)    
+            if gpioAvailable:
+              GPIO.output(ledPin, ledState)    
             #set the change state flag to false as we are awaiting the next state change
             changeLedState = False
             #initialise the clock instance to track led timings
@@ -197,6 +199,7 @@ finally:
 
 scope.pySurface.fill((0,0,0))
 scope.screen.blit(scope.pySurface,(0,0))
-GPIO.cleanup()
+if gpioAvailable:
+  GPIO.cleanup()
 os.system("killall fbcp")
 pygame.quit()
